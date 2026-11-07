@@ -115,4 +115,4 @@ def test_list_tasks(client):
     assert make_task(client, title="second task", priority="low").status_code == 201
 
     response = client.get("/tasks")
-    #assert response.lenght() == 2
+    assert len(response.json()) == 2

@@ -23,7 +23,7 @@ def get_task(task_id: int) -> Task:
 def list_tasks() -> list[Task]:
     return task_services.list_tasks()
 
-
+@router.put("/tasks/{task_id}")
 @router.patch("/tasks/{task_id}")
 def update_task(task_id: int, task_in: TaskUpdate) -> Task:
     task = task_services.update_task(task_id, task_in)

@@ -17,6 +17,7 @@ class Task(TaskCreate):
 
 
 class TaskUpdate(BaseModel):
+    title: str | None = None
     description: str | None = None
     status: Literal["todo", "in_progress", "done"] | None = None
     priority: Literal["low", "medium", "high"] | None = None
