@@ -14,3 +14,10 @@ class TaskCreate(BaseModel):
 class Task(TaskCreate):
     id: int
     created_at: datetime
+
+
+class TaskUpdate(BaseModel):
+    description: str | None = None
+    status: Literal["todo", "in_progress", "done"] | None = None
+    priority: Literal["low", "medium", "high"] | None = None
+    tags: list[str] = Field(default_factory=list)
