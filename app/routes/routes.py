@@ -1,3 +1,4 @@
+from typing import Literal
 from fastapi import APIRouter, HTTPException
 from app.models import Task, TaskCreate, TaskUpdate
 from app.services import task_services
@@ -20,8 +21,11 @@ def get_task(task_id: int) -> Task:
 
 
 @router.get("/tasks")
-def list_tasks() -> list[Task]:
-    return task_services.list_tasks()
+def list_tasks(status: Literal["todo", "in_progress", "done"] | None = None,
+    priority: Literal["low", "medium", "high"] | None = None,
+    tag: str | None = None,
+    search: str | None = None) -> list[Task]:
+    return task_services.list_tasks(status, priority, tag, search)
 
 @router.put("/tasks/{task_id}")
 @router.patch("/tasks/{task_id}")
@@ -36,3 +40,5 @@ def update_task(task_id: int, task_in: TaskUpdate) -> Task:
 def delete_task(task_id: int) -> None:
     if task_services.delete_task(task_id) is False:
         raise HTTPException(status_code=404, detail=f"Task with id: {task_id} does not exist." )
+
+

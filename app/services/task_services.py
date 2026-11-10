@@ -24,8 +24,22 @@ def reset_tasks():
     _next_id = 1
 
 
-def list_tasks() -> list[Task]:
-    return list(_tasks.values())
+def list_tasks(status=None, priority=None, tag=None, search=None) -> list[Task]:
+    tasks = list(_tasks.values())
+
+    if status is not None:
+        tasks = [task for task in tasks if task.status == status]
+    if priority is not None:
+        tasks = [task for task in tasks if task.priority == priority]
+    if tag is not None:
+        tasks = [task for task in tasks if tag in task.tags]
+    if search is not None:
+        text = search.lower()
+        tasks = [
+            task for task in tasks
+            if text in task.title.lower() or text in (task.description or "").lower()
+        ]
+    return tasks
 
 
 def update_task(task_id: int, task_in: TaskUpdate) -> Task | None:
@@ -43,3 +57,4 @@ def delete_task(task_id: int) -> bool:
         _tasks.pop(task_id)
         return True
     return False
+
