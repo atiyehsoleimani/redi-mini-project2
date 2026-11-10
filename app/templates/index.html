@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tasks Manager</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        h1, h2 { margin-bottom: 0.5rem; }
+        form { margin-bottom: 1.5rem; }
+        label { display: block; margin-top: 0.5rem; }
+        input, select, textarea { padding: 0.3rem; margin-top: 0.2rem; }
+        button { margin-top: 0.8rem; padding: 0.4rem 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ccc; }
+        .error { color: #b00020; font-weight: bold; }
+        .filters label { display: inline-block; margin-right: 0.8rem; }
+    </style>
+</head>
+<body>
+    <h1>Tasks Manager</h1>
+
+    <h2>New task</h2>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/add-task">
+        <label>Title
+            <input name="title" required>
+        </label>
+
+        <label>Description
+            <textarea name="description" rows="3" cols="40"></textarea>
+        </label>
+
+        <label>Status
+            <select name="status">
+                <option value="todo">todo</option>
+                <option value="in_progress">in_progress</option>
+                <option value="done">done</option>
+            </select>
+        </label>
+
+        <label>Priority
+            <select name="priority">
+                <option value="low">low</option>
+                <option value="medium" selected>medium</option>
+                <option value="high">high</option>
+            </select>
+        </label>
+
+        <label>Tags (separated by commas)
+            <input name="tags" placeholder="work, home">
+        </label>
+
+        <button type="submit">Add task</button>
+    </form>
+
+    <h2>Tasks</h2>
+
+    <form method="get" action="/" class="filters">
+        <label>Search
+            <input name="search" value="{{ search or '' }}">
+        </label>
+
+        <label>Tag
+            <input name="tag" value="{{ tag or '' }}">
+        </label>
+
+        <label>Status
+            <select name="status">
+                <option value="">All</option>
+                <option value="todo" {% if status == "todo" %}selected{% endif %}>todo</option>
+                <option value="in_progress" {% if status == "in_progress" %}selected{% endif %}>in_progress</option>
+                <option value="done" {% if status == "done" %}selected{% endif %}>done</option>
+            </select>
+        </label>
+
+        <label>Priority
+            <select name="priority">
+                <option value="">All</option>
+                <option value="low" {% if priority == "low" %}selected{% endif %}>low</option>
+                <option value="medium" {% if priority == "medium" %}selected{% endif %}>medium</option>
+                <option value="high" {% if priority == "high" %}selected{% endif %}>high</option>
+            </select>
+        </label>
+
+        <button type="submit">Filter</button>
+        <a href="/">Clear</a>
+    </form>
+
+    {% if tasks %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Tags</th>
+                <th>Created</th>
+            </tr>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>
+                    {{ task.title }}
+                    {% if task.description %}<br><small>{{ task.description }}</small>{% endif %}
+                </td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.tags | join(", ") }}</td>
+                <td>{{ task.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No tasks found.</p>
+    {% endif %}
+</body>
+</html>
